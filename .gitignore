@@ -1,0 +1,6 @@
+# ignore these files
+*.out
+*.[oa]
+*~
+*.sublime-workspace
+*.data
