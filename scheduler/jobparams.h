@@ -4,7 +4,7 @@
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-25 01:15:24
+* Last Modified time: 2015-09-25 18:32:33
 *----------------------------------------------------------------------------*/
 // File: jobparms.h 
 // Class declarations for job parameters
@@ -32,11 +32,12 @@ public:
 private:
   enum val_t {bool_t, num_t, str_t};
   struct param_t {val_t type; unsigned size;};
+  struct parameter {std::string name; val_t type; unsigned size;};
   unsigned int n_params;
   unsigned int n_tasks;
   bool valid;
   std::string infile;
-  std::map<std::string, param_t> param_list;
+  std::vector<parameter> param_list;
   std::map<std::string, std::vector<bool> > boo_params;
   std::map<std::string, std::vector<double> > num_params;
   std::map<std::string, std::vector<std::string> > str_params;
