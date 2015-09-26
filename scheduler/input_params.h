@@ -4,7 +4,7 @@
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-26 16:54:57
+* Last Modified time: 2015-09-27 00:01:17
 *----------------------------------------------------------------------------*/
 // File: jobparms.h 
 // Class declarations for job parameters
@@ -23,11 +23,11 @@ namespace input {
 
 class Parameters;  // forward declaration
 
-class JobParameters
+class InputParameters
 {
 public:
-  JobParameters() {n_tasks=n_params=0; valid=false;} 
-  JobParameters(const std::string& inputfile); 
+  InputParameters() {n_tasks=n_params=0; valid=false;} 
+  InputParameters(const std::string& inputfile); 
   void read_params(const std::string& inputfile);
   unsigned int task_size(void) {return n_tasks;}
   void get_task_param(const unsigned& task_id); 
@@ -65,8 +65,8 @@ class Parameters
 public:
   Parameters() {};
 
-  friend void JobParameters::init_task_param(Parameters& p);
-  friend void JobParameters::set_task_param(Parameters& p, const unsigned& task_id);
+  friend void InputParameters::init_task_param(Parameters& p);
+  friend void InputParameters::set_task_param(Parameters& p, const unsigned& task_id);
 
 private:
   struct pval {bool is_const; bool bool_val; double num_val; std::string str_val;};

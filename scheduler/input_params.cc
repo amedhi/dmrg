@@ -7,7 +7,7 @@
 * Last Modified time: 2015-09-16 00:47:17
 *----------------------------------------------------------------------------*/
 // File: jobparms.cc 
-// Implentation for JobParameters Class 
+// Implentation for InputParameters Class 
 #include <fstream>
 #include <cctype>
 #include <cmath>
@@ -20,34 +20,34 @@
 
 namespace input {
 
-JobParameters::JobParameters(const std::string& inputfile): n_params(0), n_tasks(0)
+InputParameters::InputParameters(const std::string& inputfile): n_params(0), n_tasks(0)
 {
   try {
     n_tasks = parse(inputfile);
     n_params = param_list.size();
     valid = true;
   }
-  catch (JobParameters::bad_input& input_error) {
+  catch (InputParameters::bad_input& input_error) {
     std::cout << input_error.message() << std::endl;
     valid = false;
   }
 }
 
-void JobParameters::read_params(const std::string& inputfile)
+void InputParameters::read_params(const std::string& inputfile)
 {
   try {
     n_tasks = parse(inputfile);
     n_params = param_list.size();
     valid = true;
   }
-  catch (JobParameters::bad_input& input_error) {
+  catch (InputParameters::bad_input& input_error) {
     std::cout << input_error.message() << std::endl;
     valid = false;
     n_tasks = n_params = 0;
   }
 }
 
-unsigned int JobParameters::parse(const std::string& inputfile)
+unsigned int InputParameters::parse(const std::string& inputfile)
 {
   std::ifstream fin;
   infile = inputfile;
@@ -287,7 +287,7 @@ unsigned int JobParameters::parse(const std::string& inputfile)
   return n_sets;
 } // JobParms::parse()
 
-void JobParameters::get_task_param(const unsigned& task_id)
+void InputParameters::get_task_param(const unsigned& task_id)
 {
   std::vector<unsigned> idx(param_list.size());
   for (unsigned& i : idx) i = 0;
@@ -330,7 +330,7 @@ void JobParameters::get_task_param(const unsigned& task_id)
   std::cout << "\n";
 }
 
-void JobParameters::init_task_param(Parameters& p)
+void InputParameters::init_task_param(Parameters& p)
 {
   using key_val_pair = std::pair<const std::string, Parameters::pval>;
   Parameters::pval value{};
@@ -342,7 +342,7 @@ void JobParameters::init_task_param(Parameters& p)
 
 
 
-void JobParameters::set_task_param(Parameters& p, const unsigned& task_id)
+void InputParameters::set_task_param(Parameters& p, const unsigned& task_id)
 {
   // indices to access the first parameter set
   std::vector<unsigned> idx(param_list.size());
@@ -381,12 +381,12 @@ void JobParameters::set_task_param(Parameters& p, const unsigned& task_id)
 
 
 
-JobParameters::bad_input::bad_input(const std::string& msg, const int& ln)
+InputParameters::bad_input::bad_input(const std::string& msg, const int& ln)
   : std::runtime_error(msg), lnum(ln)
 {
 }
 
-std::string JobParameters::bad_input::message(void) const
+std::string InputParameters::bad_input::message(void) const
 {
   std::string msg = " **bad_input: ";
   if (lnum >= 0) msg += "line " + std::to_string(lnum) + ": ";
@@ -394,7 +394,7 @@ std::string JobParameters::bad_input::message(void) const
   return msg;
 }
 
-/*bool JobParameters::parse_error(const int& lno, const std::string& msg) 
+/*bool InputParameters::parse_error(const int& lno, const std::string& msg) 
 {
   std::cout << " **parse error: line " << lno << ": " << msg << std::endl;
   return false;
