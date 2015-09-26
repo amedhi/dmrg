@@ -4,7 +4,7 @@
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-24 13:24:48
+* Last Modified time: 2015-09-26 16:52:25
 *----------------------------------------------------------------------------*/
 // File: scheduler.h 
 // Classes for handling job scheduling
@@ -29,7 +29,6 @@ public:
 
 private:
   int simmaster;
-  bool valid;
   //TaskParams parms;
 };
 
@@ -43,7 +42,7 @@ public:
 
 private:
   CmdArg cmdarg;
-  JobParams pstore;
+  input::JobParameters input;
   unsigned int task_size;
 };
 

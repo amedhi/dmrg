@@ -25,7 +25,7 @@ int start(int argc, const char *argv[])
 }
 
 MasterScheduler::MasterScheduler(int argc, const char *argv[])
-  : Scheduler{}, cmdarg{argc, argv}, pstore{}, task_size{0}
+  : Scheduler{}, cmdarg{argc, argv}, input{}, task_size{0}
 {
 }
 
@@ -36,10 +36,15 @@ int MasterScheduler::run(void)
   if (!valid) return 0;
 
   // job parameters
-  task_size = pstore.fill(cmdarg.input_file());
-  // TaskParams params;
+  input.read_params(cmdarg.input_file());
+  task_size = input.task_size();
+  input::Parameters params;
+  input.init_task_param(params);
   for (unsigned task_id=0; task_id<task_size; ++task_id) {
     // run the tasks
+    std::cout << " task " << task_id+1 << std::endl;
+
+    input.set_task_param(params, task_id);
     //params << pstore(task_id);
   }
 

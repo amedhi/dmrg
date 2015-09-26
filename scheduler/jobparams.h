@@ -4,7 +4,7 @@
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-25 18:32:33
+* Last Modified time: 2015-09-26 16:54:57
 *----------------------------------------------------------------------------*/
 // File: jobparms.h 
 // Class declarations for job parameters
@@ -18,21 +18,25 @@
 #include <map>
 #include <stdexcept>
 
-namespace scheduler {
+namespace input {
 
-class JobParams
+
+class Parameters;  // forward declaration
+
+class JobParameters
 {
 public:
-  JobParams() {n_tasks=n_params=0; valid=false;} 
-  JobParams(const std::string& inputfile); 
-  unsigned int fill(const std::string& inputfile);
+  JobParameters() {n_tasks=n_params=0; valid=false;} 
+  JobParameters(const std::string& inputfile); 
+  void read_params(const std::string& inputfile);
   unsigned int task_size(void) {return n_tasks;}
   void get_task_param(const unsigned& task_id); 
+  void init_task_param(Parameters& p);
+  void set_task_param(Parameters& p, const unsigned& task_id); 
 
 private:
-  enum val_t {bool_t, num_t, str_t};
-  struct param_t {val_t type; unsigned size;};
-  struct parameter {std::string name; val_t type; unsigned size;};
+  enum class value_type {boo, num, str};
+  struct parameter {std::string name; value_type type; unsigned size;};
   unsigned int n_params;
   unsigned int n_tasks;
   bool valid;
@@ -53,8 +57,23 @@ private:
   private:
     int lnum;
   };
-
 };
+
+
+class Parameters 
+{
+public:
+  Parameters() {};
+
+  friend void JobParameters::init_task_param(Parameters& p);
+  friend void JobParameters::set_task_param(Parameters& p, const unsigned& task_id);
+
+private:
+  struct pval {bool is_const; bool bool_val; double num_val; std::string str_val;};
+  std::map<std::string, pval> params;
+  unsigned int n_params;
+};
+
 
 
 } // end namespace

@@ -7,7 +7,7 @@
 * Last Modified time: 2015-09-16 00:47:17
 *----------------------------------------------------------------------------*/
 // File: jobparms.cc 
-// Implentation for JobParams Class 
+// Implentation for JobParameters Class 
 #include <fstream>
 #include <cctype>
 #include <cmath>
@@ -18,40 +18,36 @@
 #include <boost/tokenizer.hpp>
 #include "jobparams.h"
 
-namespace scheduler {
+namespace input {
 
-JobParams::JobParams(const std::string& inputfile): n_params(0), n_tasks(0)
+JobParameters::JobParameters(const std::string& inputfile): n_params(0), n_tasks(0)
 {
   try {
     n_tasks = parse(inputfile);
     n_params = param_list.size();
     valid = true;
   }
-  catch (JobParams::bad_input& input_error) {
+  catch (JobParameters::bad_input& input_error) {
     std::cout << input_error.message() << std::endl;
     valid = false;
   }
 }
 
-unsigned int JobParams::fill(const std::string& inputfile)
+void JobParameters::read_params(const std::string& inputfile)
 {
   try {
     n_tasks = parse(inputfile);
     n_params = param_list.size();
     valid = true;
   }
-  catch (JobParams::bad_input& input_error) {
+  catch (JobParameters::bad_input& input_error) {
     std::cout << input_error.message() << std::endl;
     valid = false;
     n_tasks = n_params = 0;
   }
-
-  for (unsigned n=0; n<n_tasks; ++n) get_task_param(n);
-  
-  return n_tasks;
 }
 
-unsigned int JobParams::parse(const std::string& inputfile)
+unsigned int JobParameters::parse(const std::string& inputfile)
 {
   std::ifstream fin;
   infile = inputfile;
@@ -92,7 +88,6 @@ unsigned int JobParams::parse(const std::string& inputfile)
   using key_boov_pair = std::pair<const std::string, std::vector<bool> >;
   using key_numv_pair = std::pair<const std::string, std::vector<double> >;
   using key_strv_pair = std::pair<const std::string, std::vector<std::string> >;
-  using key_ptype_pair = std::pair<const std::string, param_t>;
 
   while (std::getline(fin,line)) {
     line_no++;
@@ -153,7 +148,7 @@ unsigned int JobParams::parse(const std::string& inputfile)
       // store the numerical values
       if (param_set.find(pname) == param_set.end()) {
         param_set.insert(pname);
-        param_list.push_back({pname, num_t, 0});
+        param_list.push_back({pname, value_type::num, 0});
         num_params.insert(key_numv_pair(pname, num_vec));
       } 
 
@@ -205,7 +200,7 @@ unsigned int JobParams::parse(const std::string& inputfile)
           if (pval_copy.compare("YES") == 0) {
             if (param_set.find(pname) == param_set.end()) {
               param_set.insert(pname);
-              param_list.push_back({pname, bool_t, 0});
+              param_list.push_back({pname, value_type::boo, 0});
               boo_params.insert(key_boov_pair(pname, boo_vec));
             }
             boo_params[pname].push_back(true);
@@ -214,7 +209,7 @@ unsigned int JobParams::parse(const std::string& inputfile)
           if (pval_copy.compare("NO") == 0) {
             if (param_set.find(pname) == param_set.end()) {
               param_set.insert(pname);
-              param_list.push_back({pname, bool_t, 0});
+              param_list.push_back({pname, value_type::boo, 0});
               boo_params.insert(key_boov_pair(pname, boo_vec));
             }
             boo_params[pname].push_back(false);
@@ -223,7 +218,7 @@ unsigned int JobParams::parse(const std::string& inputfile)
           // string
           if (param_set.find(pname) == param_set.end()) {
             param_set.insert(pname);
-            param_list.push_back({pname, str_t, 0});
+            param_list.push_back({pname, value_type::str, 0});
             str_params.insert(key_strv_pair(pname, str_vec));
           }
           str_params[pname].push_back(pval);
@@ -236,7 +231,7 @@ unsigned int JobParams::parse(const std::string& inputfile)
         if (pval_copy.compare("T")==0 || pval_copy.compare("TRUE")==0) {
           if (param_set.find(pname) == param_set.end()) {
             param_set.insert(pname);
-            param_list.push_back({pname, bool_t, 0});
+            param_list.push_back({pname, value_type::boo, 0});
             boo_params.insert(key_boov_pair(pname, boo_vec));
           }
           boo_params[pname].push_back(true);
@@ -245,7 +240,7 @@ unsigned int JobParams::parse(const std::string& inputfile)
         if (pval_copy.compare("F")==0 || pval_copy.compare("FALSE")==0) {
           if (param_set.find(pname) == param_set.end()) {
             param_set.insert(pname);
-            param_list.push_back({pname, bool_t, 0});
+            param_list.push_back({pname, value_type::boo, 0});
             boo_params.insert(key_boov_pair(pname, boo_vec));
           }
           boo_params[pname].push_back(false);
@@ -259,7 +254,7 @@ unsigned int JobParams::parse(const std::string& inputfile)
         catch(std::invalid_argument) {throw bad_input("invalid parameter value", line_no);}
         if (param_set.find(pname) == param_set.end()) {
           param_set.insert(pname);
-          param_list.push_back({pname, num_t, 0});
+          param_list.push_back({pname, value_type::num, 0});
           num_params.insert(key_numv_pair(pname, num_vec));
         } 
         num_params[pname].push_back(numval);
@@ -275,13 +270,13 @@ unsigned int JobParams::parse(const std::string& inputfile)
     pname = param_list[p].name;
     //std::cout << pname << " = ";
     switch (param_list[p].type) {
-      case bool_t:
+      case value_type::boo:
         param_list[p].size = boo_params[pname].size();
         break;
-      case num_t:
+      case value_type::num:
         param_list[p].size = num_params[pname].size();
         break;
-      case str_t:
+      case value_type::str:
         param_list[p].size = str_params[pname].size();
         break;
     }
@@ -292,7 +287,7 @@ unsigned int JobParams::parse(const std::string& inputfile)
   return n_sets;
 } // JobParms::parse()
 
-void JobParams::get_task_param(const unsigned& task_id)
+void JobParameters::get_task_param(const unsigned& task_id)
 {
   std::vector<unsigned> idx(param_list.size());
   for (unsigned& i : idx) i = 0;
@@ -318,13 +313,16 @@ void JobParams::get_task_param(const unsigned& task_id)
     std::cout << pname << " = ";
     i = idx[p];
     switch (param_list[p].type) {
-      case bool_t:
+      case value_type::boo:
         std::cout << boo_params[pname][i] << std::endl;
+        // p[name].bool_val = boo_params[pname][i];
         break;
-      case num_t:
+      case value_type::num:
         std::cout << num_params[pname][i] << std::endl;
+        // p[name].num_val = num_params[pname][i];
         break;
-      case str_t:
+      case value_type::str:
+        // p[name].str_val = str_params[pname][i];
         std::cout << str_params[pname][i] << std::endl;
         break;
     }
@@ -332,12 +330,63 @@ void JobParams::get_task_param(const unsigned& task_id)
   std::cout << "\n";
 }
 
-JobParams::bad_input::bad_input(const std::string& msg, const int& ln)
+void JobParameters::init_task_param(Parameters& p)
+{
+  using key_val_pair = std::pair<const std::string, Parameters::pval>;
+  Parameters::pval value{};
+  for (unsigned n=0; n<param_list.size(); ++n) {
+    value.is_const = (param_list[n].size > 1) ? false : true;
+    p.params.insert(key_val_pair(param_list[n].name, value));
+  }
+} // init_task_params
+
+
+
+void JobParameters::set_task_param(Parameters& p, const unsigned& task_id)
+{
+  // indices to access the first parameter set
+  std::vector<unsigned> idx(param_list.size());
+  for (unsigned& i : idx) i = 0;
+
+  unsigned n;
+  // advance the 'indices' to the correct set for the task
+  for (unsigned t=0; t<task_id; ++t) {
+    for (n=0; n<param_list.size(); ++n) {
+      if (idx[n]+1 < param_list[n].size) {
+        idx[n]++;
+        break;
+      }
+      idx[n] = 0;
+    }
+  }
+
+  // set the values
+  unsigned i;
+
+  std::string pname; 
+  for (n=0; n<param_list.size(); ++n) {
+    i = idx[n];
+    pname = param_list[n].name;
+    switch (param_list[n].type) {
+      case value_type::boo:
+        p.params[pname].bool_val = boo_params[pname][i]; break;
+      case value_type::num:
+        p.params[pname].num_val = num_params[pname][i]; break;
+      case value_type::str:
+        p.params[pname].str_val = str_params[pname][i]; break;
+    }
+  }
+
+} // set_task_params
+
+
+
+JobParameters::bad_input::bad_input(const std::string& msg, const int& ln)
   : std::runtime_error(msg), lnum(ln)
 {
 }
 
-std::string JobParams::bad_input::message(void) const
+std::string JobParameters::bad_input::message(void) const
 {
   std::string msg = " **bad_input: ";
   if (lnum >= 0) msg += "line " + std::to_string(lnum) + ": ";
@@ -345,7 +394,7 @@ std::string JobParams::bad_input::message(void) const
   return msg;
 }
 
-/*bool JobParams::parse_error(const int& lno, const std::string& msg) 
+/*bool JobParameters::parse_error(const int& lno, const std::string& msg) 
 {
   std::cout << " **parse error: line " << lno << ": " << msg << std::endl;
   return false;
