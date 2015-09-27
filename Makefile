@@ -19,11 +19,12 @@ LIBS = -lboost_system -lboost_filesystem
 TAGT = a.out
 GTAGT = dbg.out
 SRCS = cmdargs.cc 
-SRCS+= jobparams.cc 
+SRCS+= inputparams.cc 
+SRCS+= taskparams.cc 
 SRCS+= scheduler.cc
 SRCS+= main.cc
 
-HDRS = optionparser.h cmdargs.h jobparams.h scheduler.h
+HDRS = optionparser.h cmdargs.h inputparams.h scheduler.h
 
 AUX = Makefile input.parm changelog
 #-------------------------------------------------------------
@@ -54,11 +55,13 @@ mkdebugdir:
 DEPHDRS = optionparser.h cmdargs.h
 cmdargs.o: $(DEPHDRS)
 debug_objs/cmdargs.o: $(DEPHDRS)
-DEPHDRS += jobparams.h
-jobparams.o: jobparams.h
-debug_objs/jobparams.o: $(DEPHDRS)
+DEPHDRS += inputparams.h
+inputparams.o: inputparams.h
+debug_objs/inputparams.o: $(DEPHDRS)
+taskparams.o: inputparams.h
+debug_objs/taskparams.o: $(DEPHDRS)
 DEPHDRS += scheduler.h 
-scheduler.o: $(DEPHDRS) jobparams.h
+scheduler.o: $(DEPHDRS) 
 debug_objs/scheduler.o: $(DEPHDRS)
 
 main.o: $(DEPHDRS)

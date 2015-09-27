@@ -1,10 +1,10 @@
 /*---------------------------------------------------------------------------
-* Scheduler: A job scheduler unit
+* Scheduler: A class that handles running of user jobs.  
 * Copyright (C) 2015-2015 by Amal Medhi <amedhi@iisertvm.ac.in>.
 * All rights reserved.
 * Date:   2015-08-17 12:44:04
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-16 00:43:00
+* Last Modified time: 2015-09-27 11:04:44
 *----------------------------------------------------------------------------*/
 // File: scheduler.cpp 
 // Classes for handling job scheduling
@@ -36,15 +36,15 @@ int MasterScheduler::run(void)
   if (!valid) return 0;
 
   // job parameters
-  input.read_params(cmdarg.input_file());
+  valid = input.read_params(cmdarg.input_file());
+  if (!valid) return 0;
   task_size = input.task_size();
   input::Parameters params;
   input.init_task_param(params);
   for (unsigned task_id=0; task_id<task_size; ++task_id) {
     // run the tasks
-    std::cout << " task " << task_id+1 << std::endl;
-
     input.set_task_param(params, task_id);
+    params.show(task_id+1);
     //params << pstore(task_id);
   }
 

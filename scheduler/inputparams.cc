@@ -1,13 +1,14 @@
 /*---------------------------------------------------------------------------
-* scheduler: Classes for handling a job.
+* InputParameters: Reads all the input parameter values for the job and sets
+*                  the parameter values for individual tasks.
 * Copyright (C) 2015-2015 by Amal Medhi <amedhi@iisertvm.ac.in>.
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-16 00:47:17
+* Last Modified time: 2015-09-27 11:16:42
 *----------------------------------------------------------------------------*/
-// File: jobparms.cc 
-// Implentation for InputParameters Class 
+// File: inputparams.cc
+
 #include <fstream>
 #include <cctype>
 #include <cmath>
@@ -16,7 +17,7 @@
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <boost/tokenizer.hpp>
-#include "jobparams.h"
+#include "inputparams.h"
 
 namespace input {
 
@@ -33,7 +34,7 @@ InputParameters::InputParameters(const std::string& inputfile): n_params(0), n_t
   }
 }
 
-void InputParameters::read_params(const std::string& inputfile)
+bool InputParameters::read_params(const std::string& inputfile)
 {
   try {
     n_tasks = parse(inputfile);
@@ -45,6 +46,7 @@ void InputParameters::read_params(const std::string& inputfile)
     valid = false;
     n_tasks = n_params = 0;
   }
+  return valid;
 }
 
 unsigned int InputParameters::parse(const std::string& inputfile)
@@ -279,6 +281,7 @@ unsigned int InputParameters::parse(const std::string& inputfile)
       case value_type::str:
         param_list[p].size = str_params[pname].size();
         break;
+      default: break;
     }
     //std::cout << param_list[p].size << "\n";
     n_sets = n_sets * param_list[p].size;
@@ -287,55 +290,21 @@ unsigned int InputParameters::parse(const std::string& inputfile)
   return n_sets;
 } // JobParms::parse()
 
-void InputParameters::get_task_param(const unsigned& task_id)
-{
-  std::vector<unsigned> idx(param_list.size());
-  for (unsigned& i : idx) i = 0;
-
-  unsigned p = 0;
-  std::string pname;
-
-  // advance the 'indices' to the correct set for the task
-  for (unsigned t=0; t<task_id; ++t) {
-    for (p=0; p<param_list.size(); ++p) {
-      if (idx[p]+1 < param_list[p].size) {
-        idx[p]++;
-        break;
-      }
-      idx[p] = 0;
-    }
-  }
-
-  std::cout << "task = " << task_id+1 << "\n";
-  unsigned i;
-  for (p=0; p<param_list.size(); ++p) {
-    pname = param_list[p].name;
-    std::cout << pname << " = ";
-    i = idx[p];
-    switch (param_list[p].type) {
-      case value_type::boo:
-        std::cout << boo_params[pname][i] << std::endl;
-        // p[name].bool_val = boo_params[pname][i];
-        break;
-      case value_type::num:
-        std::cout << num_params[pname][i] << std::endl;
-        // p[name].num_val = num_params[pname][i];
-        break;
-      case value_type::str:
-        // p[name].str_val = str_params[pname][i];
-        std::cout << str_params[pname][i] << std::endl;
-        break;
-    }
-  }
-  std::cout << "\n";
-}
-
 void InputParameters::init_task_param(Parameters& p)
 {
   using key_val_pair = std::pair<const std::string, Parameters::pval>;
-  Parameters::pval value{};
+  Parameters::pval value{false,value_type::nan,false,0.0,""};
   for (unsigned n=0; n<param_list.size(); ++n) {
     value.is_const = (param_list[n].size > 1) ? false : true;
+    switch (param_list[n].type) {
+      case value_type::boo:
+        value.type = value_type::boo; break;
+      case value_type::num:
+        value.type = value_type::num; break;
+      case value_type::str:
+        value.type = value_type::str; break;
+      default: break;
+    }
     p.params.insert(key_val_pair(param_list[n].name, value));
   }
 } // init_task_params
@@ -362,7 +331,6 @@ void InputParameters::set_task_param(Parameters& p, const unsigned& task_id)
 
   // set the values
   unsigned i;
-
   std::string pname; 
   for (n=0; n<param_list.size(); ++n) {
     i = idx[n];
@@ -374,9 +342,11 @@ void InputParameters::set_task_param(Parameters& p, const unsigned& task_id)
         p.params[pname].num_val = num_params[pname][i]; break;
       case value_type::str:
         p.params[pname].str_val = str_params[pname][i]; break;
+      default: break;
+      case value_type::nan:
+        throw std::logic_error("Undefined parameter type detected"); break;
     }
   }
-
 } // set_task_params
 
 

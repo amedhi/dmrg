@@ -1,20 +1,20 @@
 /*---------------------------------------------------------------------------
-* DMRG Project: DMRG using Matrix Product States 
+* Scheduler: A class that handles running of user jobs.  
 * Copyright (C) 2015-2015 by Amal Medhi <amedhi@iisertvm.ac.in>.
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-27 00:02:28
+* Last Modified time: 2015-09-27 11:05:50
 *----------------------------------------------------------------------------*/
 // File: scheduler.h 
-// Classes for handling job scheduling
+// Definition of the Scheduler class.
 
 #ifndef SCHEDULER_SCHEDULER_H
 #define SCHEDULER_SCHEDULER_H
 
 #include <iostream>
 #include "cmdargs.h"
-#include "jobparams.h"
+#include "inputparams.h"
 
 namespace scheduler {
 

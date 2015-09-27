@@ -1,16 +1,15 @@
 /*---------------------------------------------------------------------------
-* Job scheduler: Classes for handling a job.
+* InputParameter: Classes for processing input parameters.
 * Copyright (C) 2015-2015 by Amal Medhi <amedhi@iisertvm.ac.in>.
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-27 00:01:17
+* Last Modified time: 2015-09-27 11:07:56
 *----------------------------------------------------------------------------*/
-// File: jobparms.h 
-// Class declarations for job parameters
+// File: inputparams.h 
 
-#ifndef SCHEDULER_JOBPARAMS_H
-#define SCHEDULER_JOBPARAMS_H
+#ifndef INPUT_PARAMETERS_H
+#define INPUT_PARAMETERS_H
 
 #include <iostream>
 #include <string>
@@ -20,6 +19,7 @@
 
 namespace input {
 
+enum class value_type {boo, num, str, nan};
 
 class Parameters;  // forward declaration
 
@@ -28,14 +28,13 @@ class InputParameters
 public:
   InputParameters() {n_tasks=n_params=0; valid=false;} 
   InputParameters(const std::string& inputfile); 
-  void read_params(const std::string& inputfile);
+  bool read_params(const std::string& inputfile);
   unsigned int task_size(void) {return n_tasks;}
   void get_task_param(const unsigned& task_id); 
   void init_task_param(Parameters& p);
   void set_task_param(Parameters& p, const unsigned& task_id); 
 
 private:
-  enum class value_type {boo, num, str};
   struct parameter {std::string name; value_type type; unsigned size;};
   unsigned int n_params;
   unsigned int n_tasks;
@@ -65,11 +64,12 @@ class Parameters
 public:
   Parameters() {};
 
+  void show(const unsigned&) const;
   friend void InputParameters::init_task_param(Parameters& p);
   friend void InputParameters::set_task_param(Parameters& p, const unsigned& task_id);
 
 private:
-  struct pval {bool is_const; bool bool_val; double num_val; std::string str_val;};
+  struct pval {bool is_const; value_type type; bool bool_val; double num_val; std::string str_val;};
   std::map<std::string, pval> params;
   unsigned int n_params;
 };
