@@ -4,7 +4,7 @@
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-08 11:43:22
+* Last Modified time: 2015-09-28 20:25:50
 *----------------------------------------------------------------------------*/
 // File: cmdopts.cpp 
 // Class definitions for handling command line arguments
@@ -34,6 +34,8 @@ CmdArg::CmdArg(int argc, const char *argv[]): progname("program"), inputfile("")
   option_count = parse.optionsCount();
   nonOption_count = parse.nonOptionsCount();
   if (nonOption_count) inputfile = parse.nonOption(0);
+  valid = process_options();
+  if (!valid) inputfile.clear();
 }
 
 // default desctructor

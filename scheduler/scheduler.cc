@@ -1,59 +1,35 @@
 /*---------------------------------------------------------------------------
-* Scheduler: A class that handles running of user jobs.  
+* Scheduler: A class that handles user jobs.  
 * Copyright (C) 2015-2015 by Amal Medhi <amedhi@iisertvm.ac.in>.
 * All rights reserved.
 * Date:   2015-08-17 12:44:04
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-27 11:04:44
+* Last Modified time: 2015-09-28 21:19:12
 *----------------------------------------------------------------------------*/
-// File: scheduler.cpp 
-// Classes for handling job scheduling
+// File: scheduler.cc 
+// Implementation of the Scheduler class.
 
 #include <iostream>
 #include "scheduler.h"
 
 namespace scheduler {
 
-int start(int argc, const char *argv[])
+int start(int argc, const char *argv[], AbstractTask& theTask)
 {
 
   Scheduler* theScheduler;
   theScheduler = new MasterScheduler(argc, argv);
-  int res = theScheduler->run();
+  int res = theScheduler->run(theTask);
 
 	return res;	
 }
 
-MasterScheduler::MasterScheduler(int argc, const char *argv[])
-  : Scheduler{}, cmdarg{argc, argv}, input{}, task_size{0}
+int Scheduler::run(AbstractTask& theTask) 
 {
-}
-
-int MasterScheduler::run(void) 
-{
-  std::cout << " starting..." << std::endl;
-  bool valid = cmdarg.process_options();
-  if (!valid) return 0;
-
-  // job parameters
-  valid = input.read_params(cmdarg.input_file());
-  if (!valid) return 0;
-  task_size = input.task_size();
-  input::Parameters params;
-  input.init_task_param(params);
-  for (unsigned task_id=0; task_id<task_size; ++task_id) {
-    // run the tasks
-    input.set_task_param(params, task_id);
-    params.show(task_id+1);
-    //params << pstore(task_id);
-  }
-
+  // Task task;
+  // valid = input.read_params(0);
+  // task.init_task_param()
   return 0;
 }
 
-int Scheduler::run(void) 
-{
-  return 0;
-}
-
-} // end namespace
+} // end namespace scheduler

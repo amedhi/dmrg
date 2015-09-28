@@ -21,10 +21,13 @@ GTAGT = dbg.out
 SRCS = cmdargs.cc 
 SRCS+= inputparams.cc 
 SRCS+= taskparams.cc 
+SRCS+= task.cc 
+SRCS+= master_scheduler.cc
 SRCS+= scheduler.cc
 SRCS+= main.cc
 
-HDRS = optionparser.h cmdargs.h inputparams.h scheduler.h
+HDRS = optionparser.h cmdargs.h inputparams.h task.h \
+       scheduler.h dmrg.h
 
 AUX = Makefile input.parm changelog
 #-------------------------------------------------------------
@@ -60,10 +63,15 @@ inputparams.o: inputparams.h
 debug_objs/inputparams.o: $(DEPHDRS)
 taskparams.o: inputparams.h
 debug_objs/taskparams.o: $(DEPHDRS)
+DEPHDRS += task.h
+task.o: $(DEPHDRS)
+debug_objs/task.o: $(DEPHDRS)
 DEPHDRS += scheduler.h 
+master_scheduler.o: $(DEPHDRS) 
 scheduler.o: $(DEPHDRS) 
 debug_objs/scheduler.o: $(DEPHDRS)
-
+DEPHDRS += scheduler.h 
+DEPHDRS += dmrg.h 
 main.o: $(DEPHDRS)
 
 #-------------------------------------------------------

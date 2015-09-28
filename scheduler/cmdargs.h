@@ -4,7 +4,7 @@
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-24 13:31:03
+* Last Modified time: 2015-09-28 20:31:37
 *----------------------------------------------------------------------------*/
 // File: cmdopts.h 
 // Class declarations for handling command line arguments
@@ -45,9 +45,11 @@ public:
   ~CmdArg(); // destructor
   bool process_options(void) const;
   bool have_option(enum OptionIndex idx) const { return options[idx]; }
-  std::string input_file(void) const { return inputfile; }
+  bool not_valid(void) const {return !valid;}
+  std::string filename(void) const { return inputfile; }
 
 private:
+  bool valid;
   int option_count;
   int nonOption_count;
   std::string progname;

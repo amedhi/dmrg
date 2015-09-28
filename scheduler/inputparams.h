@@ -4,7 +4,7 @@
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-27 11:07:56
+* Last Modified time: 2015-09-28 20:27:16
 *----------------------------------------------------------------------------*/
 // File: inputparams.h 
 
@@ -29,6 +29,7 @@ public:
   InputParameters() {n_tasks=n_params=0; valid=false;} 
   InputParameters(const std::string& inputfile); 
   bool read_params(const std::string& inputfile);
+  bool not_valid(void) const {return !valid;};
   unsigned int task_size(void) {return n_tasks;}
   void get_task_param(const unsigned& task_id); 
   void init_task_param(Parameters& p);
@@ -76,6 +77,6 @@ private:
 
 
 
-} // end namespace
+} // end namespace input
 
 #endif

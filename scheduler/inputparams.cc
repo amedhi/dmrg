@@ -5,7 +5,7 @@
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-27 11:16:42
+* Last Modified time: 2015-09-28 20:21:39
 *----------------------------------------------------------------------------*/
 // File: inputparams.cc
 
@@ -23,14 +23,19 @@ namespace input {
 
 InputParameters::InputParameters(const std::string& inputfile): n_params(0), n_tasks(0)
 {
-  try {
-    n_tasks = parse(inputfile);
-    n_params = param_list.size();
-    valid = true;
-  }
-  catch (InputParameters::bad_input& input_error) {
-    std::cout << input_error.message() << std::endl;
+  if (inputfile.length()==0) {
     valid = false;
+  }
+  else {
+    try {
+      n_tasks = parse(inputfile);
+      n_params = param_list.size();
+      valid = true;
+    }
+    catch (InputParameters::bad_input& input_error) {
+      std::cout << input_error.message() << std::endl;
+      valid = false;
+    }
   }
 }
 
@@ -371,5 +376,5 @@ std::string InputParameters::bad_input::message(void) const
 }*/
 
 
-} // end namespace
+} // end namespace input
 
