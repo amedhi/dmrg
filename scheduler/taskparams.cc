@@ -4,7 +4,7 @@
 * All rights reserved.
 * Date:   2015-09-27 00:31:12
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-27 11:17:57
+* Last Modified time: 2015-09-28 12:08:46
 *----------------------------------------------------------------------------*/
 // File: taskparams.cc
 
@@ -14,7 +14,6 @@ namespace input {
 
 void Parameters::show(const unsigned& set_id) const
 {
-
   std::cout << "Parameter set = " << set_id << ":" << std::endl; 
   std::cout << "---------------------" << std::endl; 
   std::map<std::string, pval>::const_iterator it;
@@ -26,7 +25,7 @@ void Parameters::show(const unsigned& set_id) const
       case value_type::num:
         std::cout << it->second.num_val; break;
       case value_type::str:
-        std::cout << it->second.str_val; break;
+        std::cout << "\"" << it->second.str_val << "\""; break;
       case value_type::nan:
         throw std::logic_error("Undefined parameter type detected"); 
         break;
@@ -37,5 +36,4 @@ void Parameters::show(const unsigned& set_id) const
 }
 
 
-
-} // name space input
+} // end namespace input
