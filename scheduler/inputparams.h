@@ -4,7 +4,7 @@
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-28 20:27:16
+* Last Modified time: 2015-09-28 22:42:07
 *----------------------------------------------------------------------------*/
 // File: inputparams.h 
 
@@ -23,11 +23,11 @@ enum class value_type {boo, num, str, nan};
 
 class Parameters;  // forward declaration
 
-class InputParameters
+class JobInput
 {
 public:
-  InputParameters() {n_tasks=n_params=0; valid=false;} 
-  InputParameters(const std::string& inputfile); 
+  JobInput() {n_tasks=n_params=0; valid=false;} 
+  JobInput(const std::string& inputfile); 
   bool read_params(const std::string& inputfile);
   bool not_valid(void) const {return !valid;};
   unsigned int task_size(void) {return n_tasks;}
@@ -65,14 +65,18 @@ class Parameters
 public:
   Parameters() {};
 
+  unsigned task_id(void) const { return this_task; }
+  unsigned task_size(void) const { return n_tasks; }
   void show(const unsigned&) const;
-  friend void InputParameters::init_task_param(Parameters& p);
-  friend void InputParameters::set_task_param(Parameters& p, const unsigned& task_id);
+  friend void JobInput::init_task_param(Parameters& p);
+  friend void JobInput::set_task_param(Parameters& p, const unsigned& task_id);
 
 private:
   struct pval {bool is_const; value_type type; bool bool_val; double num_val; std::string str_val;};
   std::map<std::string, pval> params;
-  unsigned int n_params;
+  unsigned n_params;
+  unsigned this_task;
+  unsigned n_tasks;
 };
 
 

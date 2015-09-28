@@ -4,7 +4,7 @@
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-28 22:01:49
+* Last Modified time: 2015-09-28 22:43:04
 *----------------------------------------------------------------------------*/
 // File: scheduler.h 
 // Definition of the Scheduler class.
@@ -49,7 +49,7 @@ public:
 
 private:
   CmdArg cmdarg;
-  input::InputParameters input;
+  input::JobInput input;
   unsigned int task_size;
 };
 

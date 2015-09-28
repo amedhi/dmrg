@@ -3,7 +3,7 @@
 * All rights reserved.
 * Date:   2015-09-28 12:08:30
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-28 22:10:36
+* Last Modified time: 2015-09-28 22:40:51
 *----------------------------------------------------------------------------*/
 #include <iostream>
 #include "scheduler/task.h"
@@ -23,6 +23,7 @@ public:
 void DMRGTask::start(input::Parameters& parms)
 {
   //double u = parms.set_value("U", 1.0);
+  std::cout << "task " << parms.task_id()+1 << " of " << parms.task_size() << std::endl;
 }
 
 void DMRGTask::run()

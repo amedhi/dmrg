@@ -4,7 +4,7 @@
 * All rights reserved.
 * Date:   2015-09-28 19:51:04
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-28 21:20:02
+* Last Modified time: 2015-09-28 22:19:26
 *----------------------------------------------------------------------------*/
 #include "scheduler.h"
 
@@ -26,7 +26,7 @@ int MasterScheduler::run(AbstractTask& theTask)
 
   for (unsigned task=0; task<task_size; ++task) {
     set_task_parameters(task);
-    //theTask.start(parms)
+    theTask.start(parms);
     //params << pstore(task_id);
   }
 

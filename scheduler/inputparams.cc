@@ -1,11 +1,11 @@
 /*---------------------------------------------------------------------------
-* InputParameters: Reads all the input parameter values for the job and sets
+* JobInput: Reads all the input parameter values for the job and sets
 *                  the parameter values for individual tasks.
 * Copyright (C) 2015-2015 by Amal Medhi <amedhi@iisertvm.ac.in>.
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-28 20:21:39
+* Last Modified time: 2015-09-28 22:42:29
 *----------------------------------------------------------------------------*/
 // File: inputparams.cc
 
@@ -21,7 +21,7 @@
 
 namespace input {
 
-InputParameters::InputParameters(const std::string& inputfile): n_params(0), n_tasks(0)
+JobInput::JobInput(const std::string& inputfile): n_params(0), n_tasks(0)
 {
   if (inputfile.length()==0) {
     valid = false;
@@ -32,21 +32,21 @@ InputParameters::InputParameters(const std::string& inputfile): n_params(0), n_t
       n_params = param_list.size();
       valid = true;
     }
-    catch (InputParameters::bad_input& input_error) {
+    catch (JobInput::bad_input& input_error) {
       std::cout << input_error.message() << std::endl;
       valid = false;
     }
   }
 }
 
-bool InputParameters::read_params(const std::string& inputfile)
+bool JobInput::read_params(const std::string& inputfile)
 {
   try {
     n_tasks = parse(inputfile);
     n_params = param_list.size();
     valid = true;
   }
-  catch (InputParameters::bad_input& input_error) {
+  catch (JobInput::bad_input& input_error) {
     std::cout << input_error.message() << std::endl;
     valid = false;
     n_tasks = n_params = 0;
@@ -54,7 +54,7 @@ bool InputParameters::read_params(const std::string& inputfile)
   return valid;
 }
 
-unsigned int InputParameters::parse(const std::string& inputfile)
+unsigned int JobInput::parse(const std::string& inputfile)
 {
   std::ifstream fin;
   infile = inputfile;
@@ -295,7 +295,7 @@ unsigned int InputParameters::parse(const std::string& inputfile)
   return n_sets;
 } // JobParms::parse()
 
-void InputParameters::init_task_param(Parameters& p)
+void JobInput::init_task_param(Parameters& p)
 {
   using key_val_pair = std::pair<const std::string, Parameters::pval>;
   Parameters::pval value{false,value_type::nan,false,0.0,""};
@@ -312,11 +312,11 @@ void InputParameters::init_task_param(Parameters& p)
     }
     p.params.insert(key_val_pair(param_list[n].name, value));
   }
+  p.n_tasks = task_size();
 } // init_task_params
 
 
-
-void InputParameters::set_task_param(Parameters& p, const unsigned& task_id)
+void JobInput::set_task_param(Parameters& p, const unsigned& task_id)
 {
   // indices to access the first parameter set
   std::vector<unsigned> idx(param_list.size());
@@ -352,16 +352,17 @@ void InputParameters::set_task_param(Parameters& p, const unsigned& task_id)
         throw std::logic_error("Undefined parameter type detected"); break;
     }
   }
+  p.this_task = task_id;
 } // set_task_params
 
 
 
-InputParameters::bad_input::bad_input(const std::string& msg, const int& ln)
+JobInput::bad_input::bad_input(const std::string& msg, const int& ln)
   : std::runtime_error(msg), lnum(ln)
 {
 }
 
-std::string InputParameters::bad_input::message(void) const
+std::string JobInput::bad_input::message(void) const
 {
   std::string msg = " **bad_input: ";
   if (lnum >= 0) msg += "line " + std::to_string(lnum) + ": ";
@@ -369,7 +370,7 @@ std::string InputParameters::bad_input::message(void) const
   return msg;
 }
 
-/*bool InputParameters::parse_error(const int& lno, const std::string& msg) 
+/*bool JobInput::parse_error(const int& lno, const std::string& msg) 
 {
   std::cout << " **parse error: line " << lno << ": " << msg << std::endl;
   return false;
