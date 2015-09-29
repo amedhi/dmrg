@@ -4,7 +4,7 @@
 * All rights reserved.
 * Date:   2015-08-17 13:33:19
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-28 22:42:07
+* Last Modified time: 2015-09-29 16:05:55
 *----------------------------------------------------------------------------*/
 // File: inputparams.h 
 
@@ -65,6 +65,14 @@ class Parameters
 public:
   Parameters() {};
 
+  int set_value(const std::string& pname, const int& defval) const;  
+  int set_value(const std::string& pname, const int& defval, int& info) const;
+  int set_value(const std::string& pname, const int& defval, int& info, bool& is_const) const;
+  double set_value(const std::string& pname, const double& defval) const;  
+  double set_value(const std::string& pname, const double& defval, int& info) const;  
+  double set_value(const std::string& pname, const double& defval, int& info, bool& is_const) const;  
+  std::string set_value(const std::string& pname, const std::string& defval) const;  
+  bool is_constant(const std::string& pname) const;  
   unsigned task_id(void) const { return this_task; }
   unsigned task_size(void) const { return n_tasks; }
   void show(const unsigned&) const;
@@ -77,6 +85,9 @@ private:
   unsigned n_params;
   unsigned this_task;
   unsigned n_tasks;
+  mutable std::map<std::string, pval>::const_iterator it;
+  void warn_not_found(const std::string& pname) const;
+  void warn_type_mismatch(const std::string& pname, const std::string& type) const;
 };
 
 

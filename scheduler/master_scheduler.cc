@@ -4,7 +4,7 @@
 * All rights reserved.
 * Date:   2015-09-28 19:51:04
 * Last Modified by:   amedhi
-* Last Modified time: 2015-09-28 22:19:26
+* Last Modified time: 2015-09-28 22:50:02
 *----------------------------------------------------------------------------*/
 #include "scheduler.h"
 
@@ -45,7 +45,7 @@ void MasterScheduler::read_parameters(const std::string& filename)
 void MasterScheduler::set_task_parameters(const unsigned& task) 
 {
   input.set_task_param(parms, task);
-  parms.show(task+1);
+  //parms.show(task);
 }
 
 
